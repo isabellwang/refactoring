@@ -25,10 +25,10 @@ public class StatementPrinter {
         final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer()
                 + System.lineSeparator());
         for (Performance p : getInvoice().getPerformances()) {
-            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(), getFormat(getAmount(p)),
+            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(), usd(getAmount(p)),
                     p.getAudience()));
         }
-        result.append(String.format("Amount owed is %s%n", getFormat(getTotalAmount())));
+        result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
         result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
     }
@@ -49,7 +49,7 @@ public class StatementPrinter {
         return volumeCredits;
     }
 
-    private static String getFormat(int totalAmount) {
+    private static String usd(int totalAmount) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.PERCENT_FACTOR);
     }
 

@@ -1,5 +1,10 @@
 package theater;
 
+/**
+ * Represents a play.
+ *
+ * @null This class is never null
+ */
 public class Play {
 
     private String name;
