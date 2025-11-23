@@ -27,31 +27,30 @@ public class StatementPrinter {
         final StringBuilder result = new StringBuilder("Statement for " + getInvoice().getCustomer()
                 + System.lineSeparator());
 
-        final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-
         for (Performance p : getInvoice().getPerformances()) {
 
-            // add volume credits
-            volumeCredits += getVolumeCredits(p, result, frmt);
+            volumeCredits += getVolumeCredits(p);
+
+            // print line for this order
+            result.append(String.format("  %s: %s (%s seats)%n", getPlay(p).getName(), getFormat(getAmount(p)),
+                    p.getAudience()));
             totalAmount += getAmount(p);
         }
-        result.append(String.format("Amount owed is %s%n", frmt.format(totalAmount / Constants.PERCENT_FACTOR)));
+        result.append(String.format("Amount owed is %s%n", getFormat(totalAmount)));
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
     }
 
-    private static int getVolumeCredits(Performance performance, StringBuilder rslt, NumberFormat frmt) {
+    private static String getFormat(int totalAmount) {
+        return NumberFormat.getCurrencyInstance(Locale.US).format(totalAmount / Constants.PERCENT_FACTOR);
+    }
+
+    private static int getVolumeCredits(Performance performance) {
         int result = 0;
         result += Math.max(performance.getAudience() - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
-        // add extra credit for every five comedy attendees
         if ("comedy".equals(getPlay(performance).getType())) {
             result += performance.getAudience() / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
         }
-
-        // print line for this order
-        rslt.append(String.format("  %s: %s (%s seats)%n",
-                getPlay(performance).getName(), frmt.format(getAmount(performance)
-                / Constants.PERCENT_FACTOR), performance.getAudience()));
         return result;
     }
 
